@@ -53,7 +53,7 @@ Once you have set up your environment, run the following:
 mkdir tc-build && cd tc-build
 repo init -u git://github.com/jareddantis/darwin-android-gcc -b linaro-7.x
 repo sync
-./build.sh -h
+./compile.sh -h
 ```
 
 The printout will show you how to run the script.
@@ -106,4 +106,4 @@ Additionally, please be sure to run your change through shellcheck.net (either c
 ## Credits/thanks
 
 + [nathanchance](https://github.com/nathanchance), [frap129](https://github.com/frap129), and [MSF-Jarvis](https://github.com/MSF-Jarvis): For the original version of the `build` script
-+ [jareddantis](https://github.com/jareddantis): For this version of `build` called `compile.sh
++ [jareddantis](https://github.com/jareddantis): For this version of `build` called `compile.sh`
