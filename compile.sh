@@ -193,6 +193,27 @@ function parse_parameters() {
     esac
 }
 
+# Setup source folders and build folders
+function setup_env() {
+    # Require GNU make, sed, bison, m4
+    [[ -z "$(command -v gmake)" ]] && die "GNU Make not found in your $PATH. Please install it first."
+    [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
+    [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
+    [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
+
+    INSTALL=${ROOT}/out/${TARGET}
+    SYSROOT=${ROOT}/sysroot/arch-${ARCH_TYPE}
+    CONFIGURATION+=(
+        "--target=${TARGET}"
+        "--prefix=${INSTALL}"
+        "--with-sysroot=${SYSROOT}"
+        "--with-gxx-include-dir=${SYSROOT}/c++"
+    )
+
+    export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
+    mkdir -p "${INSTALL}" "${ROOT}/out/build"
+}
+
 # Clean up from a previous compilation
 function clean_up() {
     header "CLEANING UP"
@@ -262,27 +283,6 @@ function update_repos() {
     fi
 }
 
-# Setup source folders and build folders
-function setup_env() {
-    # Require GNU make, sed, bison, m4
-    [[ -z "$(command -v gmake)" ]] && die "GNU Make not found in your $PATH. Please install it first."
-    [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
-    [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
-    [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
-
-    INSTALL=${ROOT}/out/${TARGET}
-    SYSROOT=${ROOT}/sysroot/arch-${ARCH_TYPE}
-    CONFIGURATION+=(
-        "--target=${TARGET}"
-        "--prefix=${INSTALL}"
-        "--with-sysroot=${SYSROOT}"
-        "--with-gxx-include-dir=${SYSROOT}/c++"
-    )
-
-    export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
-    mkdir -p "${INSTALL}" "${ROOT}/out/build"
-}
-
 # Build toolchain
 function build_tc() {
     header "BUILDING TOOLCHAIN"
@@ -344,15 +344,14 @@ function ending_info() {
     echo "\a"
 }
 
-
+trap 'die "Manually aborted!" -n' SIGINT SIGTERM
 setup_variables
 parse_parameters "${@}"
-trap 'die "Manually aborted!" -n' SIGINT SIGTERM
+setup_env
 clean_up
 download_sources
 extract_sources
 update_repos
-setup_env
 build_tc
 package_tc
 ending_info
