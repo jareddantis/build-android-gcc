@@ -194,6 +194,14 @@ function parse_parameters() {
     esac
 }
 
+# Clean up from a previous compilation
+function clean_up() {
+    header "CLEANING UP"
+    rm -rf "${ROOT}/out"
+    [[ -d "${ROOT}/out" ]] && die "Failed to remove 'out'. Please check if you have proper permissions."
+    echo "Clean up successful!"
+}
+
 # Setup source folders and build folders
 function setup_env() {
     # Require GNU make, sed, bison, m4
@@ -213,14 +221,6 @@ function setup_env() {
 
     export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
     mkdir -p "${INSTALL}" "${ROOT}/out/build"
-}
-
-# Clean up from a previous compilation
-function clean_up() {
-    header "CLEANING UP"
-    rm -rf "${ROOT}/out/build"
-    [[ -d "${ROOT}/out/build" ]] && die "Failed to remove 'out/build'. Please check if you have proper permissions."
-    echo "Clean up successful!"
 }
 
 function download_sources() {
@@ -349,8 +349,8 @@ function ending_info() {
 trap 'die "Manually aborted!" -n' SIGINT SIGTERM
 setup_variables
 parse_parameters "${@}"
-setup_env
 clean_up
+setup_env
 download_sources
 extract_sources
 update_repos
