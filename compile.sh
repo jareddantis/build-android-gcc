@@ -265,6 +265,11 @@ function update_repos() {
 
 # Setup source folders and build folders
 function setup_env() {
+    # Require GNU sed, bison, m4
+    [[ -z "$(command -v gsed)" ]] && die "GNU sed not found in your $PATH. Please install it first."
+    [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
+    [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
+
     INSTALL=${ROOT}/out/${TARGET}
     SYSROOT=${ROOT}/sysroot/arch-${ARCH_TYPE}
     CONFIGURATION+=(
@@ -275,7 +280,7 @@ function setup_env() {
     )
     [[ ${TARGET} = 'arm-eabi' ]] && CONFIGURATION+=( "--program-transform-name='s&^&arm-eabi-&'" )
 
-    export PATH=${INSTALL}/bin:${PATH}
+    export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
     mkdir -p "${INSTALL}" "${ROOT}/out/build"
 }
 
