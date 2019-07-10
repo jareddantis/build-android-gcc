@@ -2,10 +2,6 @@
 <manifest>
     <remote  name="github"
              fetch="https://github.com" />
-    <remote  name="aosp"
-             fetch="https://android.googlesource.com"
-             review="android-review.googlesource.com"
-             revision="refs/tags/android-9.0.0_r44" />
     <remote  name="linaro"
              fetch="https://git.linaro.org" />
     <default revision="master"
@@ -13,7 +9,7 @@
              sync-j="4"
              sync-c="true" />
 
-    <project path="build" name="toolchain/build" remote="aosp" revision="refs/tags/ndk-r20" />
+    <project path="build" name="jareddantis/android-gcc-buildroot" />
     <project path="build/scripts" name="jareddantis/darwin-android-gcc">
         <linkfile src="compile.sh" dest="compile.sh" />
     </project>
