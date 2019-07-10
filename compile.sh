@@ -302,21 +302,21 @@ function build_tc() {
 # Package toolchain
 function package_tc() {
     if [[ -n ${COMPRESSION} ]]; then
-        PACKAGE=${TARGET}-${VERSION}.x-${SOURCE}-${BUILD_DATE}.tar.${COMPRESSION}
+        PACKAGE="${ROOT}/out/${TARGET}-${GCC}-${BUILD_DATE}.tar.${COMPRESSION}"
 
         header "PACKAGING TOOLCHAIN"
 
-        echo "Target file: ${PACKAGE}"
+        echo "Target file: out/${PACKAGE}"
 
         case "${COMPRESSION}" in
             "gz")
                 echo "Packaging with GZIP..."
-                GZ_OPT=-9 tar -c --use-compress-program=gzip -f "${PACKAGE}" ${TARGET} ;;
+                GZ_OPT=-9 tar -c --use-compress-program=gzip -f "${PACKAGE}" "${INSTALL}" ;;
             "xz")
                 echo "Packaging with XZ..."
-                XZ_OPT=-9 tar -c --use-compress-program=xz -f "${PACKAGE}" ${TARGET} ;;
+                XZ_OPT=-9 tar -c --use-compress-program=xz -f "${PACKAGE}" "${INSTALL}" ;;
             *)
-                die "Invalid compression specified... skipping" ;;
+                die "Invalid compression specified, skipping..." ;;
         esac
     fi
 }
@@ -331,11 +331,12 @@ function ending_info() {
         header "BUILD SUCCESSFUL" ${VERBOSE:-"--no-first-echo"}
         echo "${BOLD}Script duration:${RST} $(format_time "${START}" "${END}")"
         echo "${BOLD}GCC version:${RST} $(${COMPILED_GCC} --version | head -n 1)"
+
         if [[ -n ${COMPRESSION} ]] && [[ -e ${PACKAGE} ]]; then
-            echo "${BOLD}File location:${RST} $(pwd)/${PACKAGE}"
+            echo "${BOLD}File location:${RST} ${PACKAGE}"
             echo "${BOLD}File size:${RST} $(du -h "${PACKAGE}" | awk '{print $1}')"
         else
-            echo "${BOLD}Toolchain location:${RST} $(pwd)/${TARGET}"
+            echo "${BOLD}Toolchain location:${RST} ${INSTALL}"
         fi
     else
         header "BUILD FAILED"
