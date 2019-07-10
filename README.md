@@ -1,33 +1,24 @@
 # darwin-android-gcc
 
-This repo contains a manifest and build script to build Android GCC toolchains for arm and arm64.
+This repo contains a manifest and build script to build Android GCC toolchains for arm and arm64 **on macOS.**
+
+If you're looking to build toolchains on Linux, check out @nathanchance's [script,](https://github.com/nathanchance/build-tools-gcc) from which this build script originated.
+
+
+## System requirements
 
 To build a toolchain, you will need the following:
 
-+ A decent processor and RAM (i5 and 8GB of RAM or more is preferred)
-+ Core developer packages (follow instructions below according to your operating system)
++ A decent processor and RAM
+  + Intel i5 and 8GB of RAM or more is preferred
+  + Though you can get by with only 4GB of RAM, as I do with my old 2014 MacBook Air.
++ Free disk space
+  + The source code will take a bit over 1 GB once synced, and
+  + Each clean build will take up around 1 GB for `arm` targets and possibly more for `aarch64`.
++ Core developer packages (see next section)
 
 
-## Installing required packages (Linux)
-
-**Arch Linux:** the `base-devel` package should be enough
-
-**Ubuntu:**
-
-```bash
-sudo apt install --no-install-recommends flex bison ncurses-dev texinfo gcc gperf patch libtool automake g++ libncurses5-dev gawk subversion expat libexpat1-dev python-all-dev binutils-dev libgcc1:i386 bc libcloog-isl-dev libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev autopoint gettext txt2man liblzma-dev libssl-dev libz-dev aria2c xz-utils repo
-```
-
-If `apt` gives an error about not being able to locate `libgcc1`:
-```bash
-sudo dpkg --add-architecture i386
-sudo apt update
-```
-
-Then run the above `sudo apt install` command again.
-
-
-## Installing required packages (macOS)
+## Installing required packages
 
 Install the Xcode Command Line Tools first:
 ```bash
@@ -36,22 +27,33 @@ xcode-select --install
 
 **If you are on macOS 10.14 or newer,** install the system headers as well:
 ```bash
+# Replace 10.14 below with your macOS version.
 open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
 ```
 
-Then install [Homebrew](https://brew.sh), and finally install the required developer packages:
+Create a disk image for storage:
+```bash
+# You can change the size spec to anything you want, but I'd recommend at least 10g (10 GB).
+# The disk image we will create here is sparse, which means that it will grow as necessary,
+# instead of taking up 10 GB from the beginning.
+hdiutil create -type SPARSE -size 10g -fs 'Case-sensitive Journaled HFS+' -volname tc-build tc-build.sparseimage
+```
+
+Install [Homebrew](https://brew.sh), and finally install the required developer packages:
 ```bash
 brew update
-brew install gcc@7 coreutils gnu-sed repo git
+brew install repo git gnu-sed bison m4 make
 ```
+
 
 ## Using the script
 
 Once you have set up your environment, run the following:
 
 ```bash
-mkdir tc-build && cd tc-build
-repo init -u git://github.com/jareddantis/darwin-android-gcc -b linaro-7.x
+hdiutil attach tc-build.sparseimage
+cd /Volumes/tc-build
+repo init -u git://github.com/jareddantis/darwin-android-gcc -b linaro-7.x --depth 1
 repo sync
 ./compile.sh -h
 ```
