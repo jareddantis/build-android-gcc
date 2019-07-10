@@ -210,25 +210,25 @@ function download_sources() {
         [[ ! -d ${ROOT}/sources ]] && mkdir "${ROOT}/sources"
         cd "${ROOT}/sources" || die "Failed to create sources directory!"
 
-        if [[ ! -f ${MPFR}.tar.xz ]]; then
+        if [[ ! -f mpfr-${MPFR}.tar.xz ]]; then
             header "DOWNLOADING MPFR"
-            aria2c -c -x15 https://www.mpfr.org/mpfr-current/mpfr-${MPFR}.tar.xz
+            aria2c -x15 https://www.mpfr.org/mpfr-current/mpfr-${MPFR}.tar.xz
         fi
 
-        if [[ ! -f ${GMP}.tar.xz ]]; then
+        if [[ ! -f gmp-${GMP}.tar.xz ]]; then
             header "DOWNLOADING GMP"
-            aria2c -c -x15 https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.xz
+            aria2c -x15 https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.xz
         fi
 
-        if [[ ! -f ${MPC}.tar.gz ]]; then
+        if [[ ! -f mpc-${MPC}.tar.gz ]]; then
             header "DOWNLOADING MPC"
-            aria2c -c -x15 https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz
+            aria2c -x15 https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz
         fi
     else
         [[ ! -d ${ROOT}/sources ]] && die "Source directory does not exist, please run without '-nu'/'--no-update'."
-        [[ ! -f ${ROOT}/sources/${MPFR}.tar.xz ]] && die "MPFR tarball does not exist, please run without '-nu'/'--no-update'."
-        [[ ! -f ${ROOT}/sources/${GMP}.tar.xz ]] && die "GMP tarball does not exist, please run without '-nu'/'--no-update'."
-        [[ ! -f ${ROOT}/sources/${MPC}.tar.xz ]] && die "MPC tarball does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/mpfr-${MPFR}.tar.xz ]] && die "MPFR tarball does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/gmp-${GMP}.tar.xz ]] && die "GMP tarball does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/mpc-${MPC}.tar.gz ]] && die "MPC tarball does not exist, please run without '-nu'/'--no-update'."
     fi
 }
 
