@@ -104,6 +104,7 @@ function format_time() {
 function setup_variables() {
     # Start of script
     START=$(date +%s)
+    BUILD_DATE=$(TZ=UTC date +%Y%m%d)
 
     # Check if running on macOS
     PLATFORM=$(uname)
@@ -131,7 +132,7 @@ function setup_variables() {
     CONFIGURATION=(
         "--host=x86_64-apple-darwin"
         "--build=x86_64-apple-darwin"
-        "--with-pkgversion='${GCC}'"
+        "--with-pkgversion='${GCC}-${BUILD_DATE}'"
         "--with-gcc-version=${GCC}"
         "--with-binutils-version=${BINUTILS}"
         "--with-gmp-version=${GMP}"
@@ -301,7 +302,7 @@ function build_tc() {
 # Package toolchain
 function package_tc() {
     if [[ -n ${COMPRESSION} ]]; then
-        PACKAGE=${TARGET}-${VERSION}.x-${SOURCE}-$(TZ=UTC date +%Y%m%d).tar.${COMPRESSION}
+        PACKAGE=${TARGET}-${VERSION}.x-${SOURCE}-${BUILD_DATE}.tar.${COMPRESSION}
 
         header "PACKAGING TOOLCHAIN"
 
