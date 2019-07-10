@@ -120,7 +120,7 @@ function setup_variables() {
 
     # Binary versions
     BINUTILS="2.32"
-    GCC="linaro-7.4-2019.01"
+    GCC="linaro-7.x"
     CLOOG="current"
     GMP="6.1.2"
     ISL="0.21"
