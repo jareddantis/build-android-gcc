@@ -178,7 +178,7 @@ function parse_parameters() {
     # Default values
     case "${ARCH}" in
         "arm")
-            TARGET="arm-none-eabi"
+            TARGET="arm-eabi"
             ARCH_TYPE="arm"
             ;;
         "arm-android")
@@ -186,7 +186,7 @@ function parse_parameters() {
             ARCH_TYPE="arm"
             ;;
         "arm64")
-            TARGET="aarch64-linux-gnu"
+            TARGET="aarch64-linux-android"
             ARCH_TYPE="arm64"
             ;;
         *) die "Absent or invalid arch specified!" -h ;;
