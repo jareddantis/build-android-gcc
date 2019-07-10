@@ -277,7 +277,7 @@ function setup_env() {
 function build_tc() {
     header "BUILDING TOOLCHAIN"
     cd "${ROOT}/out/build" || die "Build folder does not exist!"
-    "${ROOT}/build/root/configure" "${CONFIGURATION[@]}"
+    "${ROOT}/build/configure" "${CONFIGURATION[@]}"
     make ${JOBS} || die "Error while building toolchain!" -n
     make install ${JOBS} || die "Error while building toolchain!" -n
 }
