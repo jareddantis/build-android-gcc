@@ -252,7 +252,7 @@ function update_repos() {
         header "UPDATING SOURCES"
         (
             cd "${ROOT}/cloog/cloog-${CLOOG}" || die "CLooG directory does not exist!"
-            ./get-submodules.sh
+            ./get_submodules.sh
             git -C isl checkout isl-${ISL}
         )
     fi
