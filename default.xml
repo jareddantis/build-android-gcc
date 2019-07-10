@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+    <remote  name="github"
+             fetch="https://github.com" />
+    <remote  name="aosp"
+             fetch="https://android.googlesource.com"
+             review="android-review.googlesource.com"
+             revision="refs/tags/android-9.0.0_r44" />
+    <remote  name="linaro"
+             fetch="https://git.linaro.org" />
+    <default revision="master"
+             remote="github"
+             sync-j="4"
+             sync-c="true" />
+
+    <project path="manifest" name="jareddantis/darwin-android-gcc">
+        <linkfile src="compile.sh" dest="compile.sh" />
+    </project>
+    <project path="binutils/binutils-2.32" name="toolchain/binutils-gdb" remote="linaro" revision="binutils-2_32-branch" />
+    <project path="buildroot" name="toolchain/build" remote="aosp" revision="refs/tags/ndk-r20" />
+    <project path="cloog/cloog-current" name="periscop/cloog">
+        <linkfile src="isl" dest="isl/isl-0.21" />
+    </project>
+    <project path="gcc/gcc-linaro-7.x" name="toolchain/gcc" remote="linaro" revision="linaro-local/gcc-7-integration-branch" />
+    <project path="sysroot" name="jareddantis/android-gcc-sysroot" revision="gcc-7.x" />
+</manifest>
