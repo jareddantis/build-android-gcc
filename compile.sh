@@ -265,8 +265,9 @@ function update_repos() {
 
 # Setup source folders and build folders
 function setup_env() {
-    # Require GNU sed, bison, m4
-    [[ -z "$(command -v gsed)" ]] && die "GNU sed not found in your $PATH. Please install it first."
+    # Require GNU make, sed, bison, m4
+    [[ -z "$(command -v gmake)" ]] && die "GNU Make not found in your $PATH. Please install it first."
+    [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
     [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
     [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
 
@@ -294,8 +295,8 @@ function build_tc() {
         "${ROOT}/build/configure" "${CONFIGURATION[@]}"
     fi
 
-    make ${JOBS} || die "Error while building toolchain!" -n
-    make install ${JOBS} || die "Error while building toolchain!" -n
+    gmake ${JOBS} || die "Error while building toolchain!" -n
+    gmake install ${JOBS} || die "Error while building toolchain!" -n
 }
 
 # Package toolchain
