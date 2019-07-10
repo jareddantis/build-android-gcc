@@ -276,6 +276,7 @@ function setup_env() {
         "--with-sysroot=${SYSROOT}"
         "--with-gxx-include-dir=${SYSROOT}/c++"
     )
+    [[ ${TARGET} = 'arm-eabi' ]] && CONFIGURATION+=( "--program-transform-name='s&^&arm-eabi-&'" )
 
     export PATH=${INSTALL}/bin:${PATH}
     mkdir -p "${INSTALL}" "${ROOT}/out/build"
