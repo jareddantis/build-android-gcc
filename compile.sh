@@ -131,7 +131,6 @@ function setup_variables() {
     CONFIGURATION=(
         "--host=x86_64-apple-darwin"
         "--build=x86_64-apple-darwin"
-        "--target=${TARGET}"
         "--with-pkgversion='${GCC}'"
         "--with-gcc-version=${GCC}"
         "--with-binutils-version=${BINUTILS}"
@@ -324,12 +323,13 @@ function package_tc() {
 # Ending information
 function ending_info() {
     END=$(date +%s)
+    COMPILED_GCC=${INSTALL}/bin/${TARGET}-gcc
 
     [[ -z ${VERBOSE} ]] && exec 1>&5 2>&6
-    if [[ -e ${TARGET}/bin/${TARGET}-gcc ]]; then
+    if [[ -e ${COMPILED_GCC} ]]; then
         header "BUILD SUCCESSFUL" ${VERBOSE:-"--no-first-echo"}
         echo "${BOLD}Script duration:${RST} $(format_time "${START}" "${END}")"
-        echo "${BOLD}GCC version:${RST} $(${TARGET}/bin/${TARGET}-gcc --version | head -n 1)"
+        echo "${BOLD}GCC version:${RST} $(${COMPILED_GCC} --version | head -n 1)"
         if [[ -n ${COMPRESSION} ]] && [[ -e ${PACKAGE} ]]; then
             echo "${BOLD}File location:${RST} $(pwd)/${PACKAGE}"
             echo "${BOLD}File size:${RST} $(du -h "${PACKAGE}" | awk '{print $1}')"
