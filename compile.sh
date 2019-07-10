@@ -140,6 +140,7 @@ function setup_variables() {
         "--with-mpc-version=${MPC}"
         "--with-cloog-version=${CLOOG}"
         "--with-isl-version=${ISL}"
+        "--without-gdb"
         "--disable-multilib"
         "--disable-werror"
         "--disable-option-checking"
