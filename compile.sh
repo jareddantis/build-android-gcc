@@ -197,9 +197,6 @@ function parse_parameters() {
 # Clean up from a previous compilation
 function clean_up() {
     header "CLEANING UP"
-
-    #git clean -fxdq -e sources -e prebuilts
-
     rm -rf "${ROOT}/out/build"
     [[ -d "${ROOT}/out/build" ]] && die "Failed to remove 'out/build'. Please check if you have proper permissions."
     echo "Clean up successful!"
