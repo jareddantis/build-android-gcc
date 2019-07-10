@@ -278,7 +278,6 @@ function setup_env() {
         "--with-sysroot=${SYSROOT}"
         "--with-gxx-include-dir=${SYSROOT}/c++"
     )
-    [[ ${TARGET} = 'arm-eabi' ]] && CONFIGURATION+=( "--program-transform-name='s&^&arm-eabi-&'" )
 
     export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
     mkdir -p "${INSTALL}" "${ROOT}/out/build"
@@ -288,7 +287,13 @@ function setup_env() {
 function build_tc() {
     header "BUILDING TOOLCHAIN"
     cd "${ROOT}/out/build" || die "Build folder does not exist!"
-    "${ROOT}/build/configure" "${CONFIGURATION[@]}"
+
+    if [[ ${TARGET} = "arm-eabi" ]]; then
+        "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-eabi-&'
+    else
+        "${ROOT}/build/configure" "${CONFIGURATION[@]}"
+    fi
+
     make ${JOBS} || die "Error while building toolchain!" -n
     make install ${JOBS} || die "Error while building toolchain!" -n
 }
