@@ -206,22 +206,29 @@ function clean_up() {
 }
 
 function download_sources() {
-    [[ ! -d ${ROOT}/sources ]] && mkdir "${ROOT}/sources"
-    cd "${ROOT}/sources" || die "Failed to create sources directory!"
+    if [[ -z ${NO_UPDATE} ]]; then
+        [[ ! -d ${ROOT}/sources ]] && mkdir "${ROOT}/sources"
+        cd "${ROOT}/sources" || die "Failed to create sources directory!"
 
-    if [[ ! -f ${MPFR}.tar.xz ]]; then
-        header "DOWNLOADING MPFR"
-        aria2c -c -x15 https://www.mpfr.org/mpfr-current/mpfr-${MPFR}.tar.xz
-    fi
+        if [[ ! -f ${MPFR}.tar.xz ]]; then
+            header "DOWNLOADING MPFR"
+            aria2c -c -x15 https://www.mpfr.org/mpfr-current/mpfr-${MPFR}.tar.xz
+        fi
 
-    if [[ ! -f ${GMP}.tar.xz ]]; then
-        header "DOWNLOADING GMP"
-        aria2c -c -x15 https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.xz
-    fi
+        if [[ ! -f ${GMP}.tar.xz ]]; then
+            header "DOWNLOADING GMP"
+            aria2c -c -x15 https://ftp.gnu.org/gnu/gmp/gmp-${GMP}.tar.xz
+        fi
 
-    if [[ ! -f ${MPC}.tar.gz ]]; then
-        header "DOWNLOADING MPC"
-        aria2c -c -x15 https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz
+        if [[ ! -f ${MPC}.tar.gz ]]; then
+            header "DOWNLOADING MPC"
+            aria2c -c -x15 https://ftp.gnu.org/gnu/mpc/mpc-${MPC}.tar.gz
+        fi
+    else
+        [[ ! -d ${ROOT}/sources ]] && die "Source directory does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/${MPFR}.tar.xz ]] && die "MPFR tarball does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/${GMP}.tar.xz ]] && die "GMP tarball does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/sources/${MPC}.tar.xz ]] && die "MPC tarball does not exist, please run without '-nu'/'--no-update'."
     fi
 }
 
