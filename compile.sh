@@ -289,11 +289,12 @@ function build_tc() {
     header "BUILDING TOOLCHAIN"
     cd "${ROOT}/out/build" || die "Build folder does not exist!"
 
-    if [[ ${TARGET} = "arm-eabi" ]]; then
-        "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-eabi-&'
-    else
-        "${ROOT}/build/configure" "${CONFIGURATION[@]}"
-    fi
+    case "${ARCH}" in
+        "arm") "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-eabi-&' ;;
+        "arm-android") "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-linux-androideabi-&' ;;
+        "arm64") "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&aarch64-linux-android-&' ;;
+        *) "${ROOT}/build/configure" "${CONFIGURATION[@]}" ;;
+    esac
 
     gmake ${JOBS} || die "Error while building toolchain!" -n
     gmake install ${JOBS} || die "Error while building toolchain!" -n
