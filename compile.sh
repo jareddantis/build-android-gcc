@@ -356,7 +356,7 @@ setup_variables
 parse_parameters "${@}"
 clean_up
 setup_env
-update_sources
+download_sources
 extract_sources
 build_tc
 package_tc
