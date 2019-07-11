@@ -140,7 +140,6 @@ function setup_variables() {
         "--with-mpc-version=${MPC}"
         "--with-cloog-version=${CLOOG}"
         "--with-isl-version=${ISL}"
-        "--without-gdb"
         "--disable-multilib"
         "--disable-werror"
         "--disable-option-checking"
@@ -210,18 +209,19 @@ function setup_env() {
     [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
     [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
     [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
+    export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
 
-    INSTALL=${ROOT}/out/${TARGET}
-    SYSROOT=${ROOT}/sysroot/arch-${ARCH_TYPE}
+    # Prepare sysroot
+    INSTALL=${ROOT}/out/${TARGET}-${GCC}
+    SYSROOT=${INSTALL}/arch-${ARCH_TYPE}
+    mkdir -p "${INSTALL}" "${ROOT}/out/build"
+    cp -Rf "${ROOT}/sysroot/arch-${ARCH_TYPE}" "${INSTALL}"
     CONFIGURATION+=(
         "--target=${TARGET}"
         "--prefix=${INSTALL}"
         "--with-sysroot=${SYSROOT}"
         "--with-gxx-include-dir=${SYSROOT}/c++"
     )
-
-    export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/bison/bin:/usr/local/opt/m4/bin:${INSTALL}/bin:${PATH}"
-    mkdir -p "${INSTALL}" "${ROOT}/out/build"
 }
 
 # Download tarballs and update isl/osl
@@ -280,20 +280,32 @@ function extract_sources() {
     extract mpc-${MPC}.tar.gz mpc/mpc-${MPC}
 }
 
+# Build CLooG, isl, osl for graphite
+function build_graphite() {
+    export GMP_DIR="${ROOT}/gmp/gmp-${GMP}"
+    CLOOG_DIR="${ROOT}/cloog/cloog-${CLOOG}"
+    CLOOG_PREFIX="${SYSROOT}/usr"
+
+    header "BUILDING CLOOG"
+    cd "${CLOOG_DIR}" || "CLooG source folder does not exist!"
+    git reset --hard
+    git apply ${ROOT}/build/scripts/cloog-no-doc.patch
+    git -C isl checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${CLOOG_DIR}/isl."
+
+    [[ ! -f ./configure ]] && ./autogen.sh
+    mkdir -p "${ROOT}/out/build/cloog-current"
+    cd "${ROOT}/out/build/cloog-current" || die "Build folder does not exist!"
+    "${CLOOG_DIR}/configure" --prefix="${CLOOG_PREFIX}" --with-isl=bundled --with-osl=bundled --with-gmp=system
+    gmake ${JOBS} || die "Error while building CLooG!" -n
+    gmake install ${JOBS} || die "Error while building CLooG!" -n
+}
+
 # Build toolchain
 function build_tc() {
-    # Generate cloog & isl configure scripts
-    header "PREPARING CLOOG & ISL"
-    CLOOG_DIR="${ROOT}/cloog/cloog-${CLOOG}"
-    cd "${CLOOG_DIR}" || "CLooG source folder does not exist!"
-    git -C isl checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${CLOOG_DIR}/isl."
-    [[ ! -f ./configure ]] && ./autogen.sh
-    [[ ! -f isl/configure ]] && isl/autogen.sh
-
-    # Build toolchain
     header "BUILDING TOOLCHAIN"
     cd "${ROOT}/out/build" || die "Build folder does not exist!"
 
+    export LD_LIBRARY_PATH="${SYSROOT}/usr/lib"
     case "${ARCH}" in
         "arm") "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-eabi-&' ;;
         "arm-android") "${ROOT}/build/configure" "${CONFIGURATION[@]}" --program-transform-name='s&^&arm-linux-androideabi-&' ;;
@@ -359,6 +371,7 @@ clean_up
 setup_env
 download_sources
 extract_sources
+build_graphite
 build_tc
 package_tc
 ending_info

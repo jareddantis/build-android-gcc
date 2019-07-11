@@ -1,0 +1,61 @@
+diff --git a/Makefile.am b/Makefile.am
+index 9edba30..dd2fdb5 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -143,7 +143,6 @@ EXTRA_DIST = \
+ 	autoconf/Doxyfile.in \
+ 	source/matrix/constraintset.c \
+ 	cmake \
+-	doc \
+ 	examples
+ 
+ install-data-local:
+@@ -175,26 +174,6 @@ total:
+ 	$(MAKE)
+ 	$(MAKE) install
+ 
+-doc:
+-	@echo "             /*-----------------------------------------------*"
+-	@echo "              *        Generating CLooG's documentation       *"
+-	@echo "              *-----------------------------------------------*/"
+-	doxygen ./autoconf/Doxyfile
+-
+-#/*****************************************************************************
+-# *                                   Doc                                     *
+-# *****************************************************************************/
+-
+-if HAVE_TEXI2DVI
+-pdf_DATA = doc/cloog.pdf
+-dist_pdf_DATA = doc/cloog.pdf
+-doc/cloog.pdf: doc/cloog.texi doc/gitversion.texi
+-	$(TEXI2DVI) -I $(top_builddir)/doc --pdf $< -o $@
+-endif
+-
+-doc/gitversion.texi: @GIT_INDEX@
+-	echo '@set VERSION '`$(top_builddir)/genversion.sh`'' > $@
+-
+ #/*****************************************************************************
+ # *                                   Tests                                    *
+ # *****************************************************************************/
+diff --git a/configure.ac b/configure.ac
+index 5dbfa3f..7599919 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -72,8 +72,6 @@ AC_CHECK_PROG(CD, cd)
+ dnl Configure needs an empty install.sh file with this, i HATE that...
+ AC_PROG_INSTALL
+ AC_PROG_LIBTOOL
+-AC_CHECK_PROG(TEXI2DVI, texi2dvi, texi2dvi, [])
+-AM_CONDITIONAL(HAVE_TEXI2DVI, test -n "$TEXI2DVI")
+ 
+ AX_CC_MAXOPT
+ AC_SUBST(CFLAGS_WARN)
+@@ -289,8 +287,6 @@ AC_CONFIG_FILES(include/cloog/version.h)
+ AC_CONFIG_FILES([genversion.sh], [chmod +x genversion.sh])
+ AC_CONFIG_COMMANDS([version.h],
+ 	[echo '#define CLOOG_HEAD "'`./genversion.sh`'"' > version.h])
+-AC_CONFIG_COMMANDS([doc/gitversion.texi],
+-	[echo '@set VERSION '`./genversion.sh`'' > doc/gitversion.texi])
+ if test $with_isl = bundled; then
+ 	AC_CONFIG_SUBDIRS(isl)
+ fi
