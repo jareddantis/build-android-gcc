@@ -324,7 +324,7 @@ function package_tc() {
 
         header "PACKAGING TOOLCHAIN"
 
-        echo "Target file: out/${PACKAGE}"
+        echo "Target file: ${PACKAGE}"
 
         case "${COMPRESSION}" in
             "gz")
