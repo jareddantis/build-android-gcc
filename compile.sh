@@ -289,7 +289,7 @@ function build_graphite() {
     header "BUILDING CLOOG"
     cd "${CLOOG_DIR}" || "CLooG source folder does not exist!"
     git reset --hard
-    git apply ${ROOT}/build/scripts/cloog-no-doc.patch
+    git apply "${ROOT}/build/scripts/cloog-no-doc.patch"
     git -C isl checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${CLOOG_DIR}/isl."
 
     [[ ! -f ./configure ]] && ./autogen.sh
