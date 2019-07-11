@@ -148,6 +148,7 @@ function setup_variables() {
         "--disable-shared"
         "--enable-threads"
         "--enable-ld=default"
+        "--enable-graphite=yes"
         "--with-host-libstdcxx='-static-libstdc++ -Wl,-lstdc++ -lm'"
     )
     CORES=$(sysctl -a | grep machdep.cpu | grep core_count | awk '{print $2}')
