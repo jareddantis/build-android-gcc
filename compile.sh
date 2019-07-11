@@ -283,6 +283,7 @@ function extract_sources() {
 # Build toolchain
 function build_tc() {
     # Generate cloog & isl configure scripts
+    header "PREPARING CLOOG & ISL"
     CLOOG_DIR="${ROOT}/cloog/cloog-${CLOOG}"
     cd "${CLOOG_DIR}" || "CLooG source folder does not exist!"
     git -C isl checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${CLOOG_DIR}/isl."
