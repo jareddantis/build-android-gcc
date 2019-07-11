@@ -282,11 +282,12 @@ function extract_sources() {
 
 # Build toolchain
 function build_tc() {
-    # Generate isl configure script
-    ISL_DIR="${ROOT}/isl/isl-${ISL}"
-    cd "${ISL_DIR}" || "isl source folder does not exist!"
-    git checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${ISL_DIR}."
+    # Generate cloog & isl configure scripts
+    CLOOG_DIR="${ROOT}/cloog/cloog-${CLOOG}"
+    cd "${CLOOG_DIR}" || "CLooG source folder does not exist!"
+    git -C isl checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${CLOOG_DIR}/isl."
     [[ ! -f ./configure ]] && ./autogen.sh
+    [[ ! -f isl/configure ]] && isl/autogen.sh
 
     # Build toolchain
     header "BUILDING TOOLCHAIN"
