@@ -233,7 +233,6 @@ function download_sources() {
         (
             cd "${ROOT}/cloog/cloog-${CLOOG}" || die "CLooG directory does not exist!"
             ./get_submodules.sh
-            git -C isl checkout isl-${ISL}
         )
 
         if [[ ! -f mpfr-${MPFR}.tar.xz ]]; then
@@ -283,6 +282,13 @@ function extract_sources() {
 
 # Build toolchain
 function build_tc() {
+    # Generate isl configure script
+    ISL_DIR="${ROOT}/isl/isl-${ISL}"
+    cd "${ISL_DIR}" || "isl source folder does not exist!"
+    git checkout isl-${ISL} || die "Failed to checkout 'isl-${ISL}' at ${ISL_DIR}."
+    [[ ! -f ./configure ]] && ./autogen.sh
+
+    # Build toolchain
     header "BUILDING TOOLCHAIN"
     cd "${ROOT}/out/build" || die "Build folder does not exist!"
 
@@ -293,7 +299,6 @@ function build_tc() {
         *) "${ROOT}/build/configure" "${CONFIGURATION[@]}" ;;
     esac
 
-    [[ ! -f ${ROOT}/isl/isl-${ISL}/configure ]] && "${ROOT}/isl/isl-${ISL}/autogen.sh"
     gmake ${JOBS} || die "Error while building toolchain!" -n
     gmake install ${JOBS} || die "Error while building toolchain!" -n
 }
