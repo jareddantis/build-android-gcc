@@ -11,7 +11,7 @@ To build a toolchain, you will need the following:
 
 + A decent processor and RAM
   + Intel i5 and 8GB of RAM or more is preferred
-  + Though you can get by with only 4GB of RAM, as I do with my old 2014 MacBook Air.
+  + You *can* get by with only 4GB of RAM, as I do with my old 2014 base-model MacBook Air. (This machine takes around 45 minutes to complete a full build.)
 + Free disk space
   + The source code will take a bit over 1 GB once synced, and
   + Each clean build will take up around 1 GB for `arm` targets and possibly more for `aarch64`.
