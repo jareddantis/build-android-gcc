@@ -297,6 +297,7 @@ function build_tc() {
         *) "${ROOT}/build/configure" "${CONFIGURATION[@]}" ;;
     esac
 
+    [[ ! -f "${ROOT}/isl/isl-${ISL}/configure" ]] && "${ROOT}/isl/isl-${ISL}/autogen.sh"
     gmake ${JOBS} || die "Error while building toolchain!" -n
     gmake install ${JOBS} || die "Error while building toolchain!" -n
 }
