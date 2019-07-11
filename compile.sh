@@ -224,10 +224,17 @@ function setup_env() {
     mkdir -p "${INSTALL}" "${ROOT}/out/build"
 }
 
+# Download tarballs and update isl/osl
 function download_sources() {
     if [[ -z ${NO_UPDATE} ]]; then
         [[ ! -d ${ROOT}/sources ]] && mkdir "${ROOT}/sources"
         cd "${ROOT}/sources" || die "Failed to create sources directory!"
+
+        (
+            cd "${ROOT}/cloog/cloog-${CLOOG}" || die "CLooG directory does not exist!"
+            ./get_submodules.sh
+            git -C isl checkout isl-${ISL}
+        )
 
         if [[ ! -f mpfr-${MPFR}.tar.xz ]]; then
             header "DOWNLOADING MPFR"
@@ -245,6 +252,7 @@ function download_sources() {
         fi
     else
         [[ ! -d ${ROOT}/sources ]] && die "Source directory does not exist, please run without '-nu'/'--no-update'."
+        [[ ! -f ${ROOT}/isl/isl-${ISL}/autogen.sh ]] && die "CLooG submodules haven't been synced, please run without '-nu'/'--no-update'."
         [[ ! -f ${ROOT}/sources/mpfr-${MPFR}.tar.xz ]] && die "MPFR tarball does not exist, please run without '-nu'/'--no-update'."
         [[ ! -f ${ROOT}/sources/gmp-${GMP}.tar.xz ]] && die "GMP tarball does not exist, please run without '-nu'/'--no-update'."
         [[ ! -f ${ROOT}/sources/mpc-${MPC}.tar.gz ]] && die "MPC tarball does not exist, please run without '-nu'/'--no-update'."
@@ -273,18 +281,6 @@ function extract_sources() {
     extract mpc-${MPC}.tar.gz mpc/mpc-${MPC}
 }
 
-# Update git repos
-function update_repos() {
-    if [[ -z ${NO_UPDATE} ]]; then
-        header "UPDATING SOURCES"
-        (
-            cd "${ROOT}/cloog/cloog-${CLOOG}" || die "CLooG directory does not exist!"
-            ./get_submodules.sh
-            git -C isl checkout isl-${ISL}
-        )
-    fi
-}
-
 # Build toolchain
 function build_tc() {
     header "BUILDING TOOLCHAIN"
@@ -297,7 +293,7 @@ function build_tc() {
         *) "${ROOT}/build/configure" "${CONFIGURATION[@]}" ;;
     esac
 
-    [[ ! -f "${ROOT}/isl/isl-${ISL}/configure" ]] && "${ROOT}/isl/isl-${ISL}/autogen.sh"
+    [[ ! -f ${ROOT}/isl/isl-${ISL}/configure ]] && "${ROOT}/isl/isl-${ISL}/autogen.sh"
     gmake ${JOBS} || die "Error while building toolchain!" -n
     gmake install ${JOBS} || die "Error while building toolchain!" -n
 }
@@ -354,9 +350,8 @@ setup_variables
 parse_parameters "${@}"
 clean_up
 setup_env
-download_sources
+update_sources
 extract_sources
-update_repos
 build_tc
 package_tc
 ending_info
