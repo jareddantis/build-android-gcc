@@ -306,6 +306,7 @@ function extract() {
         *.xz) UNPACK=xz ;;
     esac
     [[ ! -d ${ROOT}/${2} ]] && mkdir -p "${ROOT}/${2}"
+    echo "Extracting ${1} into ${2}/"
     ${UNPACK} -d < "${1}" | tar -xC "${ROOT}/${2}" --strip-components=1
 }
 
