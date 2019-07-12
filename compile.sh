@@ -301,25 +301,23 @@ function download_sources() {
 }
 
 function extract() {
-    if [[ -d ${ROOT}/${2} ]]; then
-        echo "${2}/ already exists, skipping..."
-    else
-        case "${1}" in
-            *.gz) UNPACK=pigz ;;
-            *.xz) UNPACK=xz ;;
-        esac
-        mkdir -p "${ROOT}/${2}"
-        ${UNPACK} -d < "${1}" | tar -xC "${ROOT}/${2}" --strip-components=1
-    fi
+    case "${1}" in
+        *.gz) UNPACK=pigz ;;
+        *.xz) UNPACK=xz ;;
+    esac
+    [[ ! -d ${ROOT}/${2} ]] && mkdir -p "${ROOT}/${2}"
+    ${UNPACK} -d < "${1}" | tar -xC "${ROOT}/${2}" --strip-components=1
 }
 
 # Extract tarballs to their proper locations
 function extract_sources() {
-    header "EXTRACTING DOWNLOADED TARBALLS"
+    if [[ -z ${NO_UPDATE} ]]; then
+        header "EXTRACTING DOWNLOADED TARBALLS"
 
-    extract mpfr-${MPFR}.tar.xz mpfr/mpfr-${MPFR}
-    extract gmp-${GMP}.tar.xz gmp/gmp-${GMP}
-    extract mpc-${MPC}.tar.gz mpc/mpc-${MPC}
+        extract mpfr-${MPFR}.tar.xz mpfr/mpfr-${MPFR}
+        extract gmp-${GMP}.tar.xz gmp/gmp-${GMP}
+        extract mpc-${MPC}.tar.gz mpc/mpc-${MPC}
+    fi
 }
 
 # Build CLooG, isl, osl for graphite
