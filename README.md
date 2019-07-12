@@ -42,7 +42,7 @@ hdiutil create -type SPARSE -size 10g -fs 'Case-sensitive Journaled HFS+' -volna
 Install [Homebrew](https://brew.sh), and finally install the required developer packages:
 ```bash
 brew update
-brew install repo git gnu-sed bison m4 make
+brew install repo git gnu-sed bison m4 make pigz xz
 ```
 
 

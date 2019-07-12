@@ -206,6 +206,7 @@ function clean_up() {
 function setup_env() {
     # Require GNU make, sed, bison, m4
     [[ -z "$(command -v gmake)" ]] && die "GNU Make not found in your $PATH. Please install it first."
+    [[ -z "$(command -v pigz)" ]] && die "pigz not found in your $PATH. Please install it first."
     [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
     [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
     [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
@@ -263,7 +264,7 @@ function extract() {
         echo "${2}/ already exists, skipping..."
     else
         case "${1}" in
-            *.gz) UNPACK=gzip ;;
+            *.gz) UNPACK=pigz ;;
             *.xz) UNPACK=xz ;;
         esac
         mkdir -p "${ROOT}/${2}"
@@ -328,10 +329,12 @@ function package_tc() {
         case "${COMPRESSION}" in
             "gz")
                 echo "Packaging with gzip..."
-                GZ_OPT=-9 tar -czf "${PACKAGE}" -C "${ROOT}/out" "${TARGET}-${GCC}" ;;
+                GZ_OPT=-9 tar -cf "${PACKAGE}" --use-compress-program=pigz \
+                    -C "${ROOT}/out" --exclude="*.DS_Store" "${TARGET}-${GCC}" ;;
             "xz")
                 echo "Packaging with xz..."
-                XZ_OPT=-9 tar -cJf "${PACKAGE}" -C "${ROOT}/out" "${TARGET}-${GCC}" ;;
+                XZ_OPT="-9 --threads=${THREADS}" tar -cf "${PACKAGE}" --use-compress-program=xz \
+                    -C "${ROOT}/out" --exclude="*.DS_Store" "${TARGET}-${GCC}" ;;
             *)
                 die "Invalid compression specified, skipping..." ;;
         esac
