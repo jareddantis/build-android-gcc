@@ -268,6 +268,7 @@ function setup_env() {
 # Download tarballs and update isl/osl
 function download_sources() {
     if [[ -z ${NO_UPDATE} ]]; then
+        [[ -z "$(command -v aria2c)" ]] && die "aria2c not found in your $PATH. Please install it first."
         [[ ! -d ${ROOT}/sources ]] && mkdir "${ROOT}/sources"
         cd "${ROOT}/sources" || die "Failed to create sources directory!"
 
