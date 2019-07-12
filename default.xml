@@ -10,7 +10,7 @@
              sync-c="true" />
 
     <project path="build" name="jareddantis/android-gcc-buildroot" />
-    <project path="build/scripts" name="jareddantis/darwin-android-gcc">
+    <project path="build/scripts" name="jareddantis/build-android-gcc">
         <linkfile src="compile.sh" dest="compile.sh" />
     </project>
     <project path="binutils/binutils-2.32" name="toolchain/binutils-gdb" remote="linaro" revision="binutils-2_32-branch" />
