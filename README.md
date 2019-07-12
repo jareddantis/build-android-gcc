@@ -1,8 +1,8 @@
-# darwin-android-gcc
+# build-android-gcc
 
-This repo contains a manifest and build script to build Android GCC toolchains for arm and arm64 **on macOS.**
+This repo contains a manifest and build script to build Android GCC toolchains for arm and arm64 on Linux and macOS.
 
-If you're looking to build toolchains on Linux, check out @nathanchance's [script,](https://github.com/nathanchance/build-tools-gcc) from which this build script originated.
+If you're looking to build toolchains for non-Android targets, check out @nathanchance's [script,](https://github.com/nathanchance/build-tools-gcc) from which this build script originated.
 
 
 ## System requirements
@@ -11,14 +11,37 @@ To build a toolchain, you will need the following:
 
 + A decent processor and RAM
   + Intel i5 and 8GB of RAM or more is preferred
-  + You *can* get by with only 4GB of RAM, as I do with my old 2014 base-model MacBook Air. (This machine takes around 45 minutes to complete a full build.)
 + Free disk space
   + The source code will take a bit over 1 GB once synced, and
-  + Each clean build will take up around 1 GB for `arm` targets and possibly more for `aarch64`.
-+ Core developer packages (see next section)
+  + Each clean build will take up around 1 GB on macOS and around 2-3 GB on Linux.
++ Core developer packages (see instructions for [Linux](#installing-required-packages-linux) and [macOS](#installing-required-packages-macos))
+
+In my testing, compilation is still possible, albeit painfully slow, with 4GB RAM and a:
+
++ Haswell i5 (base-model 2014 MacBook Air, macOS 10.14.5, full build + xz packaging: **45 minutes**)
++ Core 2 Duo P8600 (Vista-era ASUS laptop, Arch Linux, full build + xz packaging: **50 minutes**)
 
 
-## Installing required packages
+## Installing required packages (Linux)
+
++ **Arch Linux:** `sudo pacman -Sy base-devel`
+  + No need to do this if you `pacstrap`ped with `base-devel`
++ **Ubuntu:**
+
+```bash
+sudo dpkg --add-architecture i386
+sudo apt update
+sudo apt install --no-install-recommends flex bison ncurses-dev texinfo gcc gperf patch libtool automake g++ libncurses5-dev gawk  expat libexpat1-dev python-all-dev binutils-dev libgcc1:i386 bc libcloog-isl-dev libcap-dev autoconf libgmp-dev build-essential gcc-multilib g++-multilib pkg-config libmpc-dev libmpfr-dev autopoint gettext txt2man liblzma-dev libssl-dev libz-dev xz-utils pigz repo git
+```
+
+After installing packages, create and enter a folder in which we will do our work:
+```bash
+mkdir tc-build
+cd tc-build
+```
+
+
+## Installing required packages (macOS)
 
 Install the Xcode Command Line Tools first:
 ```bash
@@ -31,18 +54,24 @@ xcode-select --install
 open /Library/Developer/CommandLineTools/Packages/macOS_SDK_headers_for_macOS_10.14.pkg
 ```
 
-Create a disk image for storage:
+Install [Homebrew](https://brew.sh), and finally install the required developer packages:
+```bash
+brew update
+brew install repo git gnu-sed bison m4 make pigz xz
+```
+
+Create and mount a disk image for storage:
 ```bash
 # You can change the size spec to anything you want, but I'd recommend at least 10g (10 GB).
 # The disk image we will create here is sparse, which means that it will grow as necessary,
 # instead of taking up 10 GB from the beginning.
 hdiutil create -type SPARSE -size 10g -fs 'Case-sensitive Journaled HFS+' -volname tc-build tc-build.sparseimage
-```
 
-Install [Homebrew](https://brew.sh), and finally install the required developer packages:
-```bash
-brew update
-brew install repo git gnu-sed bison m4 make pigz xz
+# Mount it
+hdiutil attach tc-build.sparseimage
+
+# Then cd into it
+cd /Volumes/tc-build
 ```
 
 
@@ -51,9 +80,7 @@ brew install repo git gnu-sed bison m4 make pigz xz
 Once you have set up your environment, run the following:
 
 ```bash
-hdiutil attach tc-build.sparseimage
-cd /Volumes/tc-build
-repo init -u git://github.com/jareddantis/darwin-android-gcc -b linaro-7.x --depth 1
+repo init -u git://github.com/jareddantis/build-android-gcc -b linaro-7.x --depth 1
 repo sync
 ./compile.sh -h
 ```
