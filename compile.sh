@@ -240,7 +240,7 @@ function setup_env() {
 
     if [[ ${PLATFORM} = "Darwin" ]]; then
         # Require GNU make, sed, bison, m4
-        [[ -z "$(command -v ${MK})" ]] && die "GNU Make not found in your $PATH. Please install it first."
+        [[ -z "$(command -v gmake)" ]] && die "GNU Make not found in your $PATH. Please install it first."
         [[ ! -d /usr/local/opt/gnu-sed ]] && die "Please install gnu-sed with Homebrew first."
         [[ ! -d /usr/local/opt/bison ]] && die "Please install bison with Homebrew first."
         [[ ! -d /usr/local/opt/m4 ]] && die "Please install m4 with Homebrew first."
