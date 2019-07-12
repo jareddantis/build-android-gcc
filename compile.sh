@@ -323,16 +323,15 @@ function package_tc() {
         PACKAGE="${ROOT}/out/${TARGET}-${GCC}-${BUILD_DATE}.tar.${COMPRESSION}"
 
         header "PACKAGING TOOLCHAIN"
-
         echo "Target file: ${PACKAGE}"
 
         case "${COMPRESSION}" in
             "gz")
-                echo "Packaging with GZIP..."
-                GZ_OPT=-9 tar -c --use-compress-program=gzip -f "${PACKAGE}" "${INSTALL}" ;;
+                echo "Packaging with gzip..."
+                GZ_OPT=-9 tar -czf "${PACKAGE}" -C "${ROOT}/out" "${TARGET}-${GCC}" ;;
             "xz")
-                echo "Packaging with XZ..."
-                XZ_OPT=-9 tar -c --use-compress-program=xz -f "${PACKAGE}" "${INSTALL}" ;;
+                echo "Packaging with xz..."
+                XZ_OPT=-9 tar -cJf "${PACKAGE}" -C "${ROOT}/out" "${TARGET}-${GCC}" ;;
             *)
                 die "Invalid compression specified, skipping..." ;;
         esac
